@@ -4,19 +4,11 @@ import Text from './components/Text/Text';
 import speechToText from './services/speechToText';
 import twitter from './services/twitter';
 
-const messages = [
-  'Di algo.',
-  'Di "twitter" para publicar en Twitter.',
-  'Di "editar" para editar manualmente el texto.',
-  'Di "cancelar" para eliminar el texto.',
-  'Di "deja de escuchar" para eliminar la escucha.',
-];
-
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.defaultState = {
-      messages,
+      message: '',
       error: '',
       text: '',
       rows: 5,
@@ -26,6 +18,15 @@ class App extends React.Component {
     this.state = { ...this.defaultState };
     this.transcriptionHandler = this.transcriptionHandler.bind(this);
     this.editHandler = this.editHandler.bind(this);
+    this.setRandomMessage = this.setRandomMessage.bind(this);
+    this.timer = null;
+    this.messages = [
+      'Di algo.',
+      'Di "twitter" para publicar en Twitter.',
+      'Di "editar" para editar manualmente el texto.',
+      'Di "cancelar" para eliminar el texto.',
+      'Di "deja de escuchar" para eliminar la escucha.',
+    ];
   }
 
   transcriptionHandler(error, text, probability, editable, shareOnTwitter) {
@@ -45,21 +46,27 @@ class App extends React.Component {
     this.setState({ ...props });
   }
 
-  getRandomMessage() {
-    const items = this.state.messages;
+  setRandomMessage() {
+    const items = this.messages;
     const randomIndex = Math.floor(Math.random() * items.length);
-    return items[randomIndex];
+    this.setState({ message: items[randomIndex] });
   }
 
   componentDidMount() {
     speechToText.init(this.transcriptionHandler);
+    this.setRandomMessage();
+    this.timer = setInterval(this.setRandomMessage, 1000 * 3);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer);
   }
 
   render() {
     return (
       <div className="app">
         <div className="app__section error">
-          {this.state.error ? this.state.error : this.getRandomMessage() }
+          {this.state.error ? this.state.error : this.state.message }
         </div>
         <Text
           text={this.state.text}
