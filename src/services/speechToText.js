@@ -66,7 +66,7 @@ function listen (cb) {
       console.log('signal to stop');
       stopped = true;
       editable = false;
-      error = 'app is not listening anymore!';
+      error = 'Ya no te escucho :(';
       recognition.abort();
     }
 

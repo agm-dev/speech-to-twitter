@@ -4,11 +4,20 @@ import Text from './components/Text/Text';
 import speechToText from './services/speechToText';
 import twitter from './services/twitter';
 
+const messages = [
+  'Di algo.',
+  'Di "twitter" para publicar en Twitter.',
+  'Di "editar" para editar manualmente el texto.',
+  'Di "cancelar" para eliminar el texto.',
+  'Di "deja de escuchar" para eliminar la escucha.',
+];
+
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.defaultState = {
-      error: 'Talk to write. Say "twitter" to publish on Twitter, "cancelar" to remove the text, "deja de escuchar" to stop listening your voice.',
+      messages,
+      error: '',
       text: '',
       rows: 5,
       probability: 0,
@@ -36,6 +45,12 @@ class App extends React.Component {
     this.setState({ ...props });
   }
 
+  getRandomMessage() {
+    const items = this.state.messages;
+    const randomIndex = Math.floor(Math.random() * items.length);
+    return items[randomIndex];
+  }
+
   componentDidMount() {
     speechToText.init(this.transcriptionHandler);
   }
@@ -43,12 +58,8 @@ class App extends React.Component {
   render() {
     return (
       <div className="app">
-        <div className="app__section accuracy">
-          {
-            this.state.probability ?
-            `${Math.round(this.state.probability * 100)}%` :
-            ''
-          }
+        <div className="app__section error">
+          {this.state.error ? this.state.error : this.getRandomMessage() }
         </div>
         <Text
           text={this.state.text}
@@ -56,9 +67,6 @@ class App extends React.Component {
           onEdit={this.editHandler}
           rows={this.state.rows}
         />
-        <div className="app__section error">
-          {this.state.error}
-        </div>
       </div>
     );
   }

@@ -37,6 +37,10 @@ class ResizableTextarea extends React.PureComponent {
     this.props.onEdit({ rows, text });
   };
 
+  componentDidMount() {
+    this.nameInput.focus();
+  }
+
   render() {
     return (
       <textarea
@@ -44,6 +48,7 @@ class ResizableTextarea extends React.PureComponent {
         value={this.props.text}
         className="app__input app__text app__section"
         onChange={this.handleChange}
+        ref={input => this.nameInput = input}
       />
     );
   }
